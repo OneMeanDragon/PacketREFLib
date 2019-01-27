@@ -161,8 +161,8 @@ void VB6_API2 SID_CLIENTID(const SOCKET s, unsigned int *RegistrationVersion, un
 		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
-	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN + DW_LEN + DW_LEN + DW_LEN + BNET_UNKSTR_LEN + BNET_UNKSTR_LEN];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN + DW_LEN + DW_LEN + DW_LEN + BNET_UNKSTR_LEN + BNET_UNKSTR_LEN);
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 4) + (BNET_UNKSTR_LEN * 2)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 4) + (BNET_UNKSTR_LEN * 2));
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CLIENTID;
@@ -205,8 +205,8 @@ void VB6_API2 SERVER_SID_CLIENTID(const SOCKET s, unsigned int *RegistrationVers
 		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
-	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN + DW_LEN + DW_LEN + DW_LEN];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN + DW_LEN + DW_LEN + DW_LEN);
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 4)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 4));
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CLIENTID;
@@ -243,8 +243,8 @@ void VB6_API2 SID_STARTVERSIONING(const SOCKET s, unsigned char *PlatformID, uns
 		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
-	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN + DW_LEN + DW_LEN + DW_LEN];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN + DW_LEN + DW_LEN + DW_LEN);
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 4)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 4));
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_STARTVERSIONING;
@@ -282,8 +282,8 @@ void VB6_API2 SERVER_SID_STARTVERSIONING(const SOCKET s, unsigned char *FileTime
 		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
-	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN + DW_LEN + BNET_UNKSTR_LEN + BNET_UNKSTR_LEN];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN + DW_LEN + BNET_UNKSTR_LEN + BNET_UNKSTR_LEN);
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 2) + (BNET_UNKSTR_LEN * 2)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 2) + (BNET_UNKSTR_LEN * 2));
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_STARTVERSIONING;
@@ -772,8 +772,8 @@ void VB6_API2 SID_READUSERDATA(const SOCKET s, unsigned int *NumberOfAccounts, u
 	} //vb6 socket handle was -1 (not initalized / not bound)
 	if (*NameLength >= BNET_FILEPATH_MAX) { return; }
 	if (*KeyLength >= BNET_FILEPATH_MAX) { return; }
-	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 3) + BNET_FILEPATH_MAX + BNET_FILEPATH_MAX];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 3) + BNET_FILEPATH_MAX + BNET_FILEPATH_MAX);
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 3) + (BNET_FILEPATH_MAX * 2)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 3) + (BNET_FILEPATH_MAX * 2));
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_READUSERDATA;
@@ -819,8 +819,8 @@ void VB6_API2 SID_WRITEUSERDATA(const SOCKET s, unsigned int *NumberOfAccounts, 
 	if (*KeyLength >= BNET_FILEPATH_MAX) { return; }
 	if (*Values >= BNET_FILEPATH_MAX) { return; }
 
-	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 2) + BNET_FILEPATH_MAX + BNET_FILEPATH_MAX + BNET_FILEPATH_MAX];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 2) + BNET_FILEPATH_MAX + BNET_FILEPATH_MAX + BNET_FILEPATH_MAX);
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 2) + (BNET_FILEPATH_MAX * 3)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 2) + (BNET_FILEPATH_MAX * 3));
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_WRITEUSERDATA;
