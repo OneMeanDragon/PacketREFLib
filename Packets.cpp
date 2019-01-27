@@ -18,6 +18,7 @@
 #define ID_SID_FLOODDETECTED		0x13
 #define ID_SID_UDPPINGRESPONSE		0x14
 #define ID_SID_CHECKAD				0x15
+#define ID_SID_CLICKAD				0x16
 #define ID_SID_READUSERDATA			0x26
 #define ID_SID_WRITEUSERDATA		0x27
 #define ID_SID_GETICONDATA			0x2D
@@ -1059,6 +1060,38 @@ void VB6_API2 SERVER_SID_CHECKAD(const SOCKET s, unsigned int *AdID, unsigned in
 
 #ifdef _DEBUG
 	OutputDebugString("SID_CHECKAD: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_CLICKAD(const SOCKET s, unsigned int *AdID, unsigned int *RequestType)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_CLICKAD: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 2)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 2));
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_CHECKAD;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//PlatformID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *AdID;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//ProductID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RequestType;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_CLICKAD: HAS BEEN SENT\r\n");
 #endif
 }
 
