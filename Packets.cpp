@@ -20,6 +20,9 @@
 #define ID_SID_CHECKAD				0x15
 #define ID_SID_CLICKAD				0x16
 #define ID_SID_READMEMORY			0x17
+//#define ID_SID_REGISTRY			0x18 //gone to the ages
+#define ID_SID_MESSAGEBOX			0x19
+#define ID_SID_STARTADVEX2			0x1A
 #define ID_SID_READUSERDATA			0x26
 #define ID_SID_WRITEUSERDATA		0x27
 #define ID_SID_GETICONDATA			0x2D
@@ -1018,7 +1021,7 @@ void VB6_API2 SERVER_SID_CHECKAD(const SOCKET s, unsigned int *AdID, unsigned in
 	{
 		//type up a debug print out of the error
 #ifdef _DEBUG
-		OutputDebugString("SID_CHECKAD: INVALID_SOCKET\r\n");
+		OutputDebugString("SERVER_SID_CHECKAD: INVALID_SOCKET\r\n");
 #endif
 		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
@@ -1060,7 +1063,7 @@ void VB6_API2 SERVER_SID_CHECKAD(const SOCKET s, unsigned int *AdID, unsigned in
 	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
 
 #ifdef _DEBUG
-	OutputDebugString("SID_CHECKAD: HAS BEEN SENT\r\n");
+	OutputDebugString("SERVER_SID_CHECKAD: HAS BEEN SENT\r\n");
 #endif
 }
 
@@ -1160,6 +1163,114 @@ void VB6_API2 SERVER_SID_READMEMORY(const SOCKET s, unsigned int *RequestID, uns
 
 #ifdef _DEBUG
 	OutputDebugString("SERVER_SID_READMEMORY: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_MESSAGEBOX(const SOCKET s, unsigned int *Style, unsigned char *Message, unsigned char *Caption)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_MESSAGEBOX: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[8196];
+	ZeroMemory(packet_buffer, 8196);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_MESSAGEBOX;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Style
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Style;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//Message
+	if (strlen((const char*)Message) >= BNET_FILEPATH_MAX)
+	{
+		Message[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Message, strlen((const char *)Message));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+	//Caption
+	if (strlen((const char*)Caption) >= BNET_FILEPATH_MAX)
+	{
+		Caption[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Caption, strlen((const char *)Caption));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_MESSAGEBOX: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_STARTADVEX2(const SOCKET s, unsigned int *Status, unsigned int *UnknownDW1, unsigned short *GameType, unsigned short *UnknowenSW, unsigned int *UnknownDW2, unsigned int *Port, unsigned char *GameName, unsigned char *GamePassword, unsigned char *GameStats)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_STARTADVEX2: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 4) + (BNET_FILEPATH_MAX * 3)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 4) + (SW_LEN * 2) + (BNET_FILEPATH_MAX * 3));
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_STARTADVEX2;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Status
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Status;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//UnknownDW1
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *UnknownDW1;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//GameType
+	*(unsigned short*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *GameType;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SW_LEN;
+	//UnknowenSW
+	*(unsigned short*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *UnknowenSW;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SW_LEN;
+	//UnknownDW2
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *UnknownDW2;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//Port
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Port;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//GameName
+	if (strlen((const char*)GameName) >= BNET_FILEPATH_MAX)
+	{
+		GameName[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), GameName, strlen((const char*)GameName));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+	//GamePassword
+	if (strlen((const char*)GamePassword) >= BNET_FILEPATH_MAX)
+	{
+		GamePassword[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), GamePassword, strlen((const char*)GamePassword));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+	//GameStats
+	if (strlen((const char*)GameStats) >= BNET_FILEPATH_MAX)
+	{
+		GameStats[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), GameStats, strlen((const char*)GameStats));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_STARTADVEX2: HAS BEEN SENT\r\n");
 #endif
 }
 
