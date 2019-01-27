@@ -127,20 +127,20 @@ FILETIME LocalTimeFT()
 
 void VB6_API2 SID_NULL(const SOCKET s)
 {
-	if (s == INVALID_SOCKET) 
+	if (s == INVALID_SOCKET)
 	{
 		//type up a debug print out of the error
 #ifdef _DEBUG
 		OutputDebugString("SID_NULL: INVALID_SOCKET\r\n");
 #endif
-		return; 
+		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
 	unsigned char packet_buffer[BNET_HEAD_LEN];
 	ZeroMemory(packet_buffer, BNET_HEAD_LEN);
 
-	*(packet_buffer+0) = BNET_PROTO;
-	*(packet_buffer+1) = ID_SID_NULL;
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_NULL;
 	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
@@ -310,8 +310,8 @@ void VB6_API2 SERVER_SID_STARTVERSIONING(const SOCKET s, unsigned char *FileTime
 #endif
 }
 
-void VB6_API2 SID_REPORTVERSION(const SOCKET s, unsigned char *PlatformID, unsigned int *version_byte, 
-								unsigned int *GameVersion, unsigned int *Checksum, unsigned char *ExeInfoString, unsigned int *InfoLength)
+void VB6_API2 SID_REPORTVERSION(const SOCKET s, unsigned char *PlatformID, unsigned int *version_byte,
+	unsigned int *GameVersion, unsigned int *Checksum, unsigned char *ExeInfoString, unsigned int *InfoLength)
 {
 	if (s == INVALID_SOCKET)
 	{
@@ -393,7 +393,7 @@ void VB6_API2 SERVER_SID_REPORTVERSION(const SOCKET s, unsigned int *Result, uns
 #endif
 }
 
-void VB6_API2 SID_GETADVLISTEX(const SOCKET s, unsigned int *GameType, unsigned int *GameSubType, 
+void VB6_API2 SID_GETADVLISTEX(const SOCKET s, unsigned int *GameType, unsigned int *GameSubType,
 	unsigned int *Filter, unsigned int *Reserved, unsigned int *Count,
 	unsigned char *GameName, unsigned char *GamePassword, unsigned char *GameStatstring)
 {
@@ -411,7 +411,7 @@ void VB6_API2 SID_GETADVLISTEX(const SOCKET s, unsigned int *GameType, unsigned 
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_ENTERCHAT;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; 
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//GameType
 	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)*GameType;
@@ -449,7 +449,101 @@ void VB6_API2 SID_GETADVLISTEX(const SOCKET s, unsigned int *GameType, unsigned 
 #endif
 }
 
-//TODO: SERVER_SID_GETADVLISTEX
+struct GameListData
+{
+	unsigned short GameType = 0;
+	unsigned short SubType = 0;
+	unsigned int LanguageID = 0;
+	unsigned short AddressFamily = 0;
+	unsigned short Port = 0;
+	unsigned int HostIP = 0;
+	unsigned int Unk1 = 0;
+	unsigned int Unk2 = 0;
+	unsigned int GameStatus = 0;
+	unsigned int ElapsedTime = 0;
+	unsigned char *GameName;
+	unsigned char *GamePasssword;
+	unsigned char *GameStatstring;
+};
+
+void VB6_API2 SERVER_SID_GETADVLISTEX(const SOCKET s, unsigned int *NumberOfGames, unsigned int *Status,
+	GameListData GameList[])
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_GETADVLISTEX: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[8196];
+	ZeroMemory(packet_buffer, 8196);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_ENTERCHAT;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+
+	//NumberOfGames
+	*(unsigned int*)(packet_buffer + BNET_LEN_POS) = *NumberOfGames;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	if (NumberOfGames == 0)
+	{
+		//Status
+		*(unsigned int*)(packet_buffer + BNET_LEN_POS) = *Status;
+		*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	} else {
+		for (unsigned int i = 0; i < *NumberOfGames; i++)
+		{
+			//GameType
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) = GameList[i].GameType;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SW_LEN;
+			//SubType
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) = GameList[i].SubType;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SW_LEN;
+			//LanguageID
+			*(unsigned int*)(packet_buffer + BNET_LEN_POS) = GameList[i].LanguageID;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+			//AddressFamily
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) = GameList[i].AddressFamily;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SW_LEN;
+			//Port
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) = GameList[i].Port;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SW_LEN;
+			//HostIP
+			*(unsigned int*)(packet_buffer + BNET_LEN_POS) = GameList[i].HostIP;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+			//Unk1
+			*(unsigned int*)(packet_buffer + BNET_LEN_POS) = GameList[i].Unk1;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+			//Unk2
+			*(unsigned int*)(packet_buffer + BNET_LEN_POS) = GameList[i].Unk2;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+			//GameStatus
+			*(unsigned int*)(packet_buffer + BNET_LEN_POS) = GameList[i].GameStatus;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+			//ElapsedTime
+			*(unsigned int*)(packet_buffer + BNET_LEN_POS) = GameList[i].ElapsedTime;
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+			//GameName
+			memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), GameList[i].GameName, strlen((const char*)GameList[i].GameName));
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+			//GamePassword
+			memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), GameList[i].GamePasssword, strlen((const char*)GameList[i].GamePasssword));
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+			//GameStatstring
+			memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), GameList[i].GameStatstring, strlen((const char*)GameList[i].GameStatstring));
+			*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+		}
+	}
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_GETADVLISTEX: HAS BEEN SENT\r\n");
+#endif
+}
 
 void VB6_API2 SID_ENTERCHAT(const SOCKET s, unsigned char *Username, unsigned char *Statstring)
 {
@@ -569,6 +663,37 @@ void VB6_API2 SID_GETCHANNELLIST(const SOCKET s, unsigned char *ProductID)
 #endif
 }
 
+void VB6_API2 SERVER_SID_GETCHANNELLIST(const SOCKET s, unsigned int *NumberOfChannels, unsigned char Channels[])
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_GETCHANNELLIST: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+	unsigned char packet_buffer[8196];
+	ZeroMemory(packet_buffer, 8196);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_GETCHANNELLIST;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+
+	for (unsigned int i = 0; i < *NumberOfChannels; i++)
+	{
+		//Channels[i]
+		memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), (unsigned char *)Channels[i], strlen((const char*)Channels[i]));
+		*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+	}
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_GETCHANNELLIST: HAS BEEN SENT\r\n");
+#endif
+}
+
 void VB6_API2 SID_JOINCHANNEL(const SOCKET s, unsigned int *Flags, unsigned char *ChannelName)
 {
 	if (s == INVALID_SOCKET)
@@ -674,7 +799,7 @@ void VB6_API2 SID_LOCALEINFO(const SOCKET s, const char *AbrevLangName, const ch
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
 	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 8) + (BNET_UNKSTR_LEN * 4)];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 8)+ (BNET_UNKSTR_LEN * 4));
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 8) + (BNET_UNKSTR_LEN * 4));
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_LOCALEINFO;
@@ -887,7 +1012,7 @@ void VB6_API2 SID_CDKEY(const SOCKET s, unsigned int *Spawn, unsigned char *CDKe
 		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
 	if (strlen((const char*)CDKey) >= BNET_CDKEY_MAX) { return; } //Maximum length of a cdkey these days is 26 for starcraft
-	
+
 	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN + BNET_CDKEY_MAX];
 	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN + BNET_CDKEY_MAX);
 
@@ -904,9 +1029,9 @@ void VB6_API2 SID_CDKEY(const SOCKET s, unsigned int *Spawn, unsigned char *CDKe
 	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
 
 	//Statstring
-	if (strlen((const char*)CDKeyOwner) >= BNET_CDKEYOWNER_MAX) 
-	{ 
-		CDKeyOwner[BNET_CDKEYOWNER_MAX] = 0x00; 
+	if (strlen((const char*)CDKeyOwner) >= BNET_CDKEYOWNER_MAX)
+	{
+		CDKeyOwner[BNET_CDKEYOWNER_MAX] = 0x00;
 	}
 	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), CDKeyOwner, strlen((const char*)CDKeyOwner));
 	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
@@ -1322,7 +1447,7 @@ void VB6_API2 MCP_CREATEGAME(const SOCKET s, unsigned int *RequestID, unsigned i
 #endif
 }
 
-void VB6_API2 MCP_JOINGAME(const SOCKET s, unsigned int *RequestID,	unsigned char *GameName, unsigned char *GamePassword)
+void VB6_API2 MCP_JOINGAME(const SOCKET s, unsigned int *RequestID, unsigned char *GameName, unsigned char *GamePassword)
 {
 	if (s == INVALID_SOCKET)
 	{
@@ -1917,7 +2042,7 @@ void VB6_API2 BOTNET_COMMAND_DB(const SOCKET s, unsigned char *SenderName, unsig
 #endif
 		return;
 	}
-	
+
 	//SenderName
 	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BOTNET_LEN_POS))), SenderName, strlen((const char*)SenderName));
 	*(unsigned short*)(packet_buffer + BOTNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + 0)))) + 1;
@@ -2188,7 +2313,7 @@ void VB6_API2 BOTNET_ACCOUNT(const SOCKET s, unsigned int *SubCommand, unsigned 
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
 	unsigned char packet_buffer[BOTNET_BASEHEAD_LEN + DW_LEN + BOTNET_ACCOUNT_MAX + BOTNET_DB_PASS_MAX + BOTNET_DB_PASS_MAX];
-	ZeroMemory(packet_buffer, BOTNET_BASEHEAD_LEN + DW_LEN +  BOTNET_ACCOUNT_MAX + BOTNET_DB_PASS_MAX + BOTNET_DB_PASS_MAX);
+	ZeroMemory(packet_buffer, BOTNET_BASEHEAD_LEN + DW_LEN + BOTNET_ACCOUNT_MAX + BOTNET_DB_PASS_MAX + BOTNET_DB_PASS_MAX);
 
 	*(packet_buffer + 0) = BOTNET_PROTO;
 	*(packet_buffer + 1) = ID_BOTNET_ACCOUNT;
