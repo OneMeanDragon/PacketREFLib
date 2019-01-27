@@ -25,6 +25,10 @@
 #define ID_SID_STARTADVEX2			0x1A
 #define ID_SID_GAMEDATAADDRESS		0x1B
 #define ID_SID_STARTADVEX3			0x1C
+#define ID_SID_LOGONCHALLENGEEX		0x1D
+#define ID_SID_CLIENTID2			0x1E
+#define ID_SID_LEAVEGAME			0x1F
+#define ID_SID_ANNOUNCEMENT			0x20
 #define ID_SID_READUSERDATA			0x26
 #define ID_SID_WRITEUSERDATA		0x27
 #define ID_SID_GETICONDATA			0x2D
@@ -1422,8 +1426,8 @@ void VB6_API2 SERVER_SID_STARTADVEX3(const SOCKET s, unsigned int *Result)
 		return;
 	} //vb6 socket handle was -1 (not initalized / not bound)
 
-	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 4) + (BNET_FILEPATH_MAX * 3)];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 4) + (SW_LEN * 2) + (BNET_FILEPATH_MAX * 3));
+	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN);
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_STARTADVEX3;
@@ -1437,6 +1441,158 @@ void VB6_API2 SERVER_SID_STARTADVEX3(const SOCKET s, unsigned int *Result)
 
 #ifdef _DEBUG
 	OutputDebugString("SERVER_SID_STARTADVEX3: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SERVER_SID_LOGONCHALLENGEEX(const SOCKET s, unsigned int *UDPKey, unsigned int *ServerKey)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_LOGONCHALLENGEEX: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 2)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 2));
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_LOGONCHALLENGEEX;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Status
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *UDPKey;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//Status
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *ServerKey;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_LOGONCHALLENGEEX: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_CLIENTID2(const SOCKET s, unsigned int *ServerVersion, unsigned int *RegistrationVersion, unsigned int *RegistrationAuthority, unsigned int *AccountNumber, unsigned int *RegistrationToken, unsigned char *PCName, unsigned char *PCUsername)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_CLIENTID2: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+	if (*ServerVersion > 1) { return; }
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 5) + (BNET_UNKSTR_LEN * 2)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 5) + (BNET_UNKSTR_LEN * 2));
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_CLIENTID2;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//ServerVersion
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *ServerVersion;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+
+	switch (*ServerVersion)
+	{
+	case 0:
+		//RegistrationAuthority
+		*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RegistrationAuthority;
+		*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+		//RegistrationVersion
+		*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RegistrationVersion;
+		*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+		break;
+	case 1:
+		//RegistrationVersion
+		*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RegistrationVersion;
+		*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+		//RegistrationAuthority
+		*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RegistrationAuthority;
+		*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+		break;
+	}
+
+	//AccountNumber
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *AccountNumber;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//RegistrationToken
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RegistrationToken;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//PCName
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), PCName, strlen((const char*)PCName));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+	//PCUsername
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), PCUsername, strlen((const char*)PCUsername));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_CLIENTID2: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_LEAVEGAME(const SOCKET s)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_LEAVEGAME: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_LEAVEGAME;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_LEAVEGAME: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SERVER_SID_ANNOUNCEMENT(const SOCKET s, unsigned char *Message)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_ANNOUNCEMENT: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + BNET_FILEPATH_MAX];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + BNET_FILEPATH_MAX);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_ANNOUNCEMENT;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Usernames NameLength
+	if (strlen((const char *)Message) >= BNET_FILEPATH_MAX) {
+		Message[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Message, strlen((const char *)Message));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((const char *)(packet_buffer + BNET_LEN_POS)) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_ANNOUNCEMENT: HAS BEEN SENT\r\n");
 #endif
 }
 
