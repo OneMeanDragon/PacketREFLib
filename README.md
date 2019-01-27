@@ -1,4 +1,4 @@
 # Educational Use Only
 
-Currently References for BNCS, MCP, BOTNET
+Currently just references for BNCS, MCP, BOTNET
 ---
