@@ -17,6 +17,7 @@
 #define ID_SID_LOCALEINFO			0x12
 #define ID_SID_FLOODDETECTED		0x13
 #define ID_SID_UDPPINGRESPONSE		0x14
+#define ID_SID_CHECKAD				0x15
 #define ID_SID_READUSERDATA			0x26
 #define ID_SID_WRITEUSERDATA		0x27
 #define ID_SID_GETICONDATA			0x2D
@@ -823,31 +824,6 @@ void VB6_API2 SERVER_SID_CHATEVENT(const SOCKET s, unsigned int *EventID, unsign
 
 }
 
-void VB6_API2 SERVER_SID_FLOODDETECTED(const SOCKET s)
-{
-	if (s == INVALID_SOCKET)
-	{
-		//type up a debug print out of the error
-#ifdef _DEBUG
-		OutputDebugString("SERVER_SID_FLOODDETECTED: INVALID_SOCKET\r\n");
-#endif
-		return;
-	} //vb6 socket handle was -1 (not initalized / not bound)
-
-	unsigned char packet_buffer[BNET_HEAD_LEN];
-	ZeroMemory(packet_buffer, BNET_HEAD_LEN);
-
-	*(packet_buffer + 0) = BNET_PROTO;
-	*(packet_buffer + 1) = ID_SID_FLOODDETECTED;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
-
-	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
-
-#ifdef _DEBUG
-	OutputDebugString("SERVER_SID_FLOODDETECTED: HAS BEEN SENT\r\n");
-#endif
-}
-
 void VB6_API2 SID_LEAVECHAT(const SOCKET s)
 {
 	if (s == INVALID_SOCKET)
@@ -942,6 +918,31 @@ void VB6_API2 SID_LOCALEINFO(const SOCKET s, const char *AbrevLangName, const ch
 #endif
 }
 
+void VB6_API2 SERVER_SID_FLOODDETECTED(const SOCKET s)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_FLOODDETECTED: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_FLOODDETECTED;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_FLOODDETECTED: HAS BEEN SENT\r\n");
+#endif
+}
+
 void VB6_API2 SID_UDPPINGRESPONSE(const SOCKET s, const char *UDPKey)
 {
 	if (s == INVALID_SOCKET)
@@ -968,6 +969,96 @@ void VB6_API2 SID_UDPPINGRESPONSE(const SOCKET s, const char *UDPKey)
 
 #ifdef _DEBUG
 	OutputDebugString("SID_UDPPINGRESPONSE: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_CHECKAD(const SOCKET s, unsigned int *PlatformID, unsigned int *ProductID, unsigned int *LastBannerID, unsigned int *CurrentTime)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_CHECKAD: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 4)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 4));
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_CHECKAD;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//PlatformID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *PlatformID;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//ProductID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *ProductID;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//LastBannerID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *LastBannerID;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//CurrentTime
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *CurrentTime;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_CHECKAD: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SERVER_SID_CHECKAD(const SOCKET s, unsigned int *AdID, unsigned int *FileExt, unsigned int *LocalFileTimeP1, unsigned int *LocalFileTimeP2, unsigned char *Filename, unsigned char *LinkURL)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_CHECKAD: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 4) + (BNET_FILEPATH_MAX * 2)];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 4) + (BNET_FILEPATH_MAX * 2));
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_CHECKAD;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//PlatformID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *AdID;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//ProductID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *FileExt;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//LastBannerID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *LocalFileTimeP1;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//CurrentTime
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *LocalFileTimeP2;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//UniqueUsername
+	if (strlen((const char*)Filename) >= BNET_FILEPATH_MAX)
+	{
+		Filename[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Filename, strlen((const char*)Filename));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+	//UniqueUsername
+	if (strlen((const char*)LinkURL) >= BNET_FILEPATH_MAX)
+	{
+		LinkURL[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), LinkURL, strlen((const char*)LinkURL));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_CHECKAD: HAS BEEN SENT\r\n");
 #endif
 }
 
