@@ -12,6 +12,7 @@
 #define ID_SID_GETCHANNELLIST		0x0B
 #define ID_SID_JOINCHANNEL			0x0C
 #define ID_SID_CHATCOMMAND			0x0E
+#define ID_SID_CHATEVENT			0x0F
 #define ID_SID_LEAVECHAT			0x10
 #define ID_SID_LOCALEINFO			0x12
 #define ID_SID_UDPPINGRESPONSE		0x14
@@ -760,6 +761,65 @@ void VB6_API2 SID_CHATCOMMAND(const SOCKET s, unsigned char *TextMessage)
 #ifdef _DEBUG
 	OutputDebugString("SID_CHATCOMMAND: HAS BEEN SENT\r\n");
 #endif
+}
+
+void VB6_API2 SERVER_SID_CHATEVENT(const SOCKET s, unsigned int *EventID, unsigned int *UserFlags, unsigned int *PingTime, unsigned int *ServerIP, unsigned int *AccountNumber, unsigned int *RegistrationAuthority, unsigned char *Username, unsigned char *Message)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_CHATEVENT: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (DW_LEN * 6) + BNET_USERNAME_MAX + BNET_FILEPATH_MAX];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (DW_LEN * 6) + BNET_USERNAME_MAX + BNET_FILEPATH_MAX);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_CHATEVENT;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//EventID
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *EventID;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//UserFlags
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *UserFlags;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//PingTime
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *PingTime;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//ServerIP
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *ServerIP;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//AccountNumber
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *AccountNumber;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//RegistrationAuthority
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RegistrationAuthority;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//UniqueUsername
+	if (strlen((const char*)Username) >= BNET_USERNAME_MAX)
+	{
+		Username[BNET_USERNAME_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Username, strlen((const char*)Username));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+	//UniqueUsername
+	if (strlen((const char*)Message) >= BNET_FILEPATH_MAX)
+	{
+		Message[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Message, strlen((const char*)Message));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_CHATEVENT: HAS BEEN SENT\r\n");
+#endif
+
 }
 
 void VB6_API2 SID_LEAVECHAT(const SOCKET s)
