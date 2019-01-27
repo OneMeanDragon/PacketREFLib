@@ -15,6 +15,7 @@
 #define ID_SID_CHATEVENT			0x0F
 #define ID_SID_LEAVECHAT			0x10
 #define ID_SID_LOCALEINFO			0x12
+#define ID_SID_FLOODDETECTED		0x13
 #define ID_SID_UDPPINGRESPONSE		0x14
 #define ID_SID_READUSERDATA			0x26
 #define ID_SID_WRITEUSERDATA		0x27
@@ -820,6 +821,31 @@ void VB6_API2 SERVER_SID_CHATEVENT(const SOCKET s, unsigned int *EventID, unsign
 	OutputDebugString("SERVER_SID_CHATEVENT: HAS BEEN SENT\r\n");
 #endif
 
+}
+
+void VB6_API2 SERVER_SID_FLOODDETECTED(const SOCKET s)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_FLOODDETECTED: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_FLOODDETECTED;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_FLOODDETECTED: HAS BEEN SENT\r\n");
+#endif
 }
 
 void VB6_API2 SID_LEAVECHAT(const SOCKET s)
