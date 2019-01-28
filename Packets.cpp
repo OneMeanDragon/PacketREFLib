@@ -1,4 +1,5 @@
 #include "includes.h"
+#include <oleauto.h>
 
 #define BNET_PROTO						0xFF
 #define BOTNET_PROTO					0x01
@@ -741,7 +742,7 @@ void VB6_API2 SID_GETCHANNELLIST(const SOCKET s, unsigned char *ProductID)
 #endif
 }
 
-void VB6_API2 SERVER_SID_GETCHANNELLIST(const SOCKET s, unsigned int *NumberOfChannels, unsigned char Channels[])
+void VB6_API2 SERVER_SID_GETCHANNELLIST(const SOCKET s, unsigned int *NumberOfChannels, LPSAFEARRAY* Channels)
 {
 	if (s == INVALID_SOCKET)
 	{
@@ -758,12 +759,17 @@ void VB6_API2 SERVER_SID_GETCHANNELLIST(const SOCKET s, unsigned int *NumberOfCh
 	*(packet_buffer + 1) = ID_SID_GETCHANNELLIST;
 	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
+	char** StrPtr = 0; //this is how we access a string array sent from VB6
+	SafeArrayAccessData(*Channels, reinterpret_cast<void**>(&StrPtr));
 	for (unsigned int i = 0; i < *NumberOfChannels; i++)
 	{
 		//Channels[i]
-		memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), (unsigned char *)Channels[i], strlen((const char*)Channels[i]));
+		if (strlen(StrPtr[i]) >= BNET_CHANNELNAME_MAX) { StrPtr[i][BNET_CHANNELNAME_MAX] = 0x00; }
+		memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), (unsigned char *)StrPtr[i], strlen((const char*)(StrPtr[i])));
 		*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
 	}
+	memcpy(StrPtr[0], "As Mother fuckin df", 20);
+	SafeArrayUnaccessData(*Channels);
 
 	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
 
