@@ -1,151 +1,155 @@
 #include "includes.h"
 
-#define BNET_PROTO					0xFF
-#define BOTNET_PROTO				0x01
+#define BNET_PROTO						0xFF
+#define BOTNET_PROTO					0x01
 
-#define ID_SID_NULL					0x00
-#define ID_SID_CLIENTID				0x05
-#define ID_SID_STARTVERSIONING		0x06
-#define ID_SID_REPORTVERSION		0x07
-#define ID_SID_GETADVLISTEX			0x09
-#define ID_SID_ENTERCHAT			0x0A
-#define ID_SID_GETCHANNELLIST		0x0B
-#define ID_SID_JOINCHANNEL			0x0C
-#define ID_SID_CHATCOMMAND			0x0E
-#define ID_SID_CHATEVENT			0x0F
-#define ID_SID_LEAVECHAT			0x10
-#define ID_SID_LOCALEINFO			0x12
-#define ID_SID_FLOODDETECTED		0x13
-#define ID_SID_UDPPINGRESPONSE		0x14
-#define ID_SID_CHECKAD				0x15
-#define ID_SID_CLICKAD				0x16
-#define ID_SID_READMEMORY			0x17
-//#define ID_SID_REGISTRY			0x18 //gone to the ages
-#define ID_SID_MESSAGEBOX			0x19
-#define ID_SID_STARTADVEX2			0x1A
-#define ID_SID_GAMEDATAADDRESS		0x1B
-#define ID_SID_STARTADVEX3			0x1C
-#define ID_SID_LOGONCHALLENGEEX		0x1D
-#define ID_SID_CLIENTID2			0x1E
-#define ID_SID_LEAVEGAME			0x1F
-#define ID_SID_ANNOUNCEMENT			0x20
-#define ID_SID_DISPLAYAD			0x21
-#define ID_SID_NOTIFYJOIN			0x22
-#define ID_SID_WRITECOOKIE			0x23
-#define ID_SID_READCOOKIE			0x24
-#define ID_SID_PING					0x25
-#define ID_SID_READUSERDATA			0x26
-#define ID_SID_WRITEUSERDATA		0x27
-#define ID_SID_LOGONCHALLENGE		0x28
-#define ID_SID_LOGONRESPONSE		0x29
-#define ID_SID_CREATEACCOUNT		0x2A
-#define ID_SID_SYSTEMINFO			0x2B
-#define ID_SID_GAMERESULT			0x2C
-#define ID_SID_GETICONDATA			0x2D
-#define ID_SID_GETLADDERDATA		0x2E
-#define ID_SID_FINDLADDERUSER		0x2F
-#define ID_SID_CDKEY				0x30
-#define ID_SID_CHANGEPASSWORD		0x31
-//#define ID_SID_CHECKDATAFILE		0x32 //Not in use [SID_CHECKDATAFILE2]
-#define ID_SID_GETFILETIME			0x33
-//#define ID_SID_QUERYREALMS		0x34 //Not in use [SID_QUERYREALMS2]
-#define ID_SID_PROFILE				0x35
-#define ID_SID_CDKEY2				0x36
-//SID_UNKNOWN_37					0x37
-//SID_UNKNOWN_38					0x38
-//SID_UNKNOWN_39					0x39
-#define ID_SID_LOGONRESPONSE2		0x3A
-//SID_UNKNOWN_3B					0x3B
-#define ID_SID_CHECKDATAFILE2		0x3C
-#define ID_SID_CREATEACCOUNT2		0x3D
-#define ID_SID_LOGONREALMEX			0x3E
-//#define ID_SID_STARTVERSIONING2	0x3F //Unknowen
-#define ID_SID_QUERYREALMS2			0x40
-#define ID_SID_QUERYADURL			0x41
-//#define ID_SID_CDKEY3				0x42 //Not in use
-//SID_WARCRAFTUNKNOWN				0x43 //Unknowen
-//SID_WARCRAFTGENERAL				0x44 //Zug Zug
-#define ID_SID_NETGAMEPORT			0x45
-#define ID_SID_NEWS_INFO			0x46
-//									0x47
-//									0x48
-//									0x49
-#define ID_SID_OPTIONALWORK			0x4A
-#define ID_SID_EXTRAWORK			0x4B
-#define ID_SID_REQUIREDWORK			0x4C
-//									0x4D
-//SID_TOURNAMENT					0x4E
-//									0x4F
-#define ID_SID_AUTHINFO				0x50
-#define ID_SID_AUTH_CHECK			0x51
+#define ID_SID_NULL						0x00
+#define ID_SID_CLIENTID					0x05
+#define ID_SID_STARTVERSIONING			0x06
+#define ID_SID_REPORTVERSION			0x07
+#define ID_SID_GETADVLISTEX				0x09
+#define ID_SID_ENTERCHAT				0x0A
+#define ID_SID_GETCHANNELLIST			0x0B
+#define ID_SID_JOINCHANNEL				0x0C
+#define ID_SID_CHATCOMMAND				0x0E
+#define ID_SID_CHATEVENT				0x0F
+#define ID_SID_LEAVECHAT				0x10
+#define ID_SID_LOCALEINFO				0x12
+#define ID_SID_FLOODDETECTED			0x13
+#define ID_SID_UDPPINGRESPONSE			0x14
+#define ID_SID_CHECKAD					0x15
+#define ID_SID_CLICKAD					0x16
+#define ID_SID_READMEMORY				0x17
+//#define ID_SID_REGISTRY				0x18 //gone to the ages
+#define ID_SID_MESSAGEBOX				0x19
+#define ID_SID_STARTADVEX2				0x1A
+#define ID_SID_GAMEDATAADDRESS			0x1B
+#define ID_SID_STARTADVEX3				0x1C
+#define ID_SID_LOGONCHALLENGEEX			0x1D
+#define ID_SID_CLIENTID2				0x1E
+#define ID_SID_LEAVEGAME				0x1F
+#define ID_SID_ANNOUNCEMENT				0x20
+#define ID_SID_DISPLAYAD				0x21
+#define ID_SID_NOTIFYJOIN				0x22
+#define ID_SID_WRITECOOKIE				0x23
+#define ID_SID_READCOOKIE				0x24
+#define ID_SID_PING						0x25
+#define ID_SID_READUSERDATA				0x26
+#define ID_SID_WRITEUSERDATA			0x27
+#define ID_SID_LOGONCHALLENGE			0x28
+#define ID_SID_LOGONRESPONSE			0x29
+#define ID_SID_CREATEACCOUNT			0x2A
+#define ID_SID_SYSTEMINFO				0x2B
+#define ID_SID_GAMERESULT				0x2C
+#define ID_SID_GETICONDATA				0x2D
+#define ID_SID_GETLADDERDATA			0x2E
+#define ID_SID_FINDLADDERUSER			0x2F
+#define ID_SID_CDKEY					0x30
+#define ID_SID_CHANGEPASSWORD			0x31
+//#define ID_SID_CHECKDATAFILE			0x32 //Not in use [SID_CHECKDATAFILE2]
+#define ID_SID_GETFILETIME				0x33
+//#define ID_SID_QUERYREALMS			0x34 //Not in use [SID_QUERYREALMS2]
+#define ID_SID_PROFILE					0x35
+#define ID_SID_CDKEY2					0x36
+//SID_UNKNOWN_37						0x37
+//SID_UNKNOWN_38						0x38
+//SID_UNKNOWN_39						0x39
+#define ID_SID_LOGONRESPONSE2			0x3A
+//SID_UNKNOWN_3B						0x3B
+#define ID_SID_CHECKDATAFILE2			0x3C
+#define ID_SID_CREATEACCOUNT2			0x3D
+#define ID_SID_LOGONREALMEX				0x3E
+//#define ID_SID_STARTVERSIONING2		0x3F //Unknowen
+#define ID_SID_QUERYREALMS2				0x40
+#define ID_SID_QUERYADURL				0x41
+//#define ID_SID_CDKEY3					0x42 //Not in use
+//SID_WARCRAFTUNKNOWN					0x43 //Unknowen
+//SID_WARCRAFTGENERAL					0x44 //Zug Zug
+#define ID_SID_NETGAMEPORT				0x45
+#define ID_SID_NEWS_INFO				0x46
+//										0x47
+//										0x48
+//										0x49
+#define ID_SID_OPTIONALWORK				0x4A
+#define ID_SID_EXTRAWORK				0x4B
+#define ID_SID_REQUIREDWORK				0x4C
+//										0x4D
+//SID_TOURNAMENT						0x4E
+//										0x4F
+#define ID_SID_AUTHINFO					0x50
+#define ID_SID_AUTH_CHECK				0x51
+#define ID_SID_AUTH_ACCOUNTCREATE		0x52
+#define ID_SID_AUTH_ACCOUNTLOGON		0x53
+#define ID_SID_AUTH_ACCOUNTLOGONPROOF	0x54
 
 /*			MCP Packets				  */
-#define ID_MCP_STARTUP				0x01
-#define ID_MCP_CHARCREATE			0x02
-#define ID_MCP_CREATEGAME			0x03
-#define ID_MCP_JOINGAME				0x04
-#define ID_MCP_GAMELIST				0x05
-#define ID_MCP_GAMEINFO				0x06
-#define ID_MCP_CHARLOGON			0x07
-#define ID_MCP_CHARDELETE			0x0A
-#define ID_MCP_REQUESTLADDERDATA	0x11
-#define ID_MCP_MOTD					0x12
-#define ID_MCP_CANCELGAMECREATE		0x13
-#define ID_MCP_CHARRANK				0x16
-#define ID_MCP_CHARUPGRADE			0x18
-#define ID_MCP_CHARLIST2			0x19
+#define ID_MCP_STARTUP					0x01
+#define ID_MCP_CHARCREATE				0x02
+#define ID_MCP_CREATEGAME				0x03
+#define ID_MCP_JOINGAME					0x04
+#define ID_MCP_GAMELIST					0x05
+#define ID_MCP_GAMEINFO					0x06
+#define ID_MCP_CHARLOGON				0x07
+#define ID_MCP_CHARDELETE				0x0A
+#define ID_MCP_REQUESTLADDERDATA		0x11
+#define ID_MCP_MOTD						0x12
+#define ID_MCP_CANCELGAMECREATE			0x13
+#define ID_MCP_CHARRANK					0x16
+#define ID_MCP_CHARUPGRADE				0x18
+#define ID_MCP_CHARLIST2				0x19
 
 /*			BOTNET Packets			  */
-#define ID_BOTNET_KEEPALIVE			0x00
-#define ID_BOTNET_LOGON				0x01
-#define ID_BOTNET_STATSUPDATE		0x02
-#define ID_BOTNET_DATABASE			0x03
-#define ID_BOTNET_COMMAND_DB		0x04
-//#define ID_BOTNET_CYCLE			0x05 //Defunct
-#define ID_BOTNET_USER_LIST			0x06
-#define ID_BOTNET_COMMAND_ALL		0x07
-#define ID_BOTNET_COMMAND_TO		0x08
-#define ID_BOTNET_DATABASE_CHPW		0x09
-#define ID_BOTNET_CLIENT_VERSION	0x0A
-#define ID_BOTNET_CHAT				0x0B
-//#define ID_BOTNET_ADMIN			0x0C //Unknowen atm
-#define ID_BOTNET_ACCOUNT			0x0D
-//#define ID_BOTNET_DATABASE_CHMO	0x0E //Defunct
-#define ID_BOTNET_CHAT_OPTIONS		0x10
+#define ID_BOTNET_KEEPALIVE				0x00
+#define ID_BOTNET_LOGON					0x01
+#define ID_BOTNET_STATSUPDATE			0x02
+#define ID_BOTNET_DATABASE				0x03
+#define ID_BOTNET_COMMAND_DB			0x04
+//#define ID_BOTNET_CYCLE				0x05 //Defunct
+#define ID_BOTNET_USER_LIST				0x06
+#define ID_BOTNET_COMMAND_ALL			0x07
+#define ID_BOTNET_COMMAND_TO			0x08
+#define ID_BOTNET_DATABASE_CHPW			0x09
+#define ID_BOTNET_CLIENT_VERSION		0x0A
+#define ID_BOTNET_CHAT					0x0B
+//#define ID_BOTNET_ADMIN				0x0C //Unknowen atm
+#define ID_BOTNET_ACCOUNT				0x0D
+//#define ID_BOTNET_DATABASE_CHMO		0x0E //Defunct
+#define ID_BOTNET_CHAT_OPTIONS			0x10
 
-#define BOTNET_LEN_POS				2
-#define BOTNET_BASEHEAD_LEN			4
-#define BOTNET_ACCOUNT_MAX			16
-#define BOTNET_NAME_MAX				32
-#define BOTNET_PASSWORD_MAX			64
-#define BOTNET_BNET_NAME_MAX		20
-#define BOTNET_BNET_CHANNELNAME_MAX	36
-#define BOTNET_DB_PASS_MAX			96
-#define BOTNET_USERMASK_MAX			40
-#define BOTNET_FLAGSTR_MAX			28
-#define BOTNET_COMMENT_MAX			64
-#define BOTNET_COMMAND_MAX			384
-#define BOTNET_MESSAGE_MAX			496
+#define BOTNET_LEN_POS					2
+#define BOTNET_BASEHEAD_LEN				4
+#define BOTNET_ACCOUNT_MAX				16
+#define BOTNET_NAME_MAX					32
+#define BOTNET_PASSWORD_MAX				64
+#define BOTNET_BNET_NAME_MAX			20
+#define BOTNET_BNET_CHANNELNAME_MAX		36
+#define BOTNET_DB_PASS_MAX				96
+#define BOTNET_USERMASK_MAX				40
+#define BOTNET_FLAGSTR_MAX				28
+#define BOTNET_COMMENT_MAX				64
+#define BOTNET_COMMAND_MAX				384
+#define BOTNET_MESSAGE_MAX				496
 
-#define BNET_HEAD_LEN				4
-#define BNET_LEN_POS				2
-#define BNET_UNKSTR_LEN				255
-#define BNET_FILEPATH_MAX			256
-#define BNET_MEMORYBLOCK_LEN		1024
-#define BNET_USERNAME_MAX			64
-#define BNET_STATSTRING_MAX			128
-#define BNET_GAMENAME_MAX			(BNET_USERNAME_MAX / 2)
-#define BNET_CHANNELNAME_MAX		(BNET_USERNAME_MAX / 2)
-#define BNET_CMESSAGE_MAX			225
-#define BNET_CDKEY_MAX				27
-#define BNET_CDKEYOWNER_MAX			16
-#define SW_LEN						2
-#define DW_LEN						4
-#define SHA_LEN						(DW_LEN * 5)
-#define MCPC1_LEN					(DW_LEN * 2)
-#define MCPC2_LEN					(DW_LEN * 12)
-#define KEY_HASH_LEN				(SHA_LEN + (DW_LEN * 4))
-#define NLS_SIGNATURE_LEN			128
+#define BNET_HEAD_LEN					4
+#define BNET_LEN_POS					2
+#define BNET_UNKSTR_LEN					255
+#define BNET_FILEPATH_MAX				256
+#define BNET_MEMORYBLOCK_LEN			1024
+#define BNET_USERNAME_MAX				64
+#define BNET_STATSTRING_MAX				128
+#define BNET_GAMENAME_MAX				(BNET_USERNAME_MAX / 2)
+#define BNET_CHANNELNAME_MAX			(BNET_USERNAME_MAX / 2)
+#define BNET_CMESSAGE_MAX				225
+#define BNET_CDKEY_MAX					27
+#define BNET_CDKEYOWNER_MAX				16
+#define SW_LEN							2
+#define DW_LEN							4
+#define SHA_LEN							(DW_LEN * 5)
+#define MCPC1_LEN						(DW_LEN * 2)
+#define MCPC2_LEN						(DW_LEN * 12)
+#define KEY_HASH_LEN					(SHA_LEN + (DW_LEN * 4))
+#define NLS_SIGNATURE_LEN				128
+#define NLS_SALT_LEN					32
 
 #pragma region "TimeZone Data for SID_AUTHINFO"
 
@@ -557,7 +561,7 @@ void VB6_API2 SERVER_SID_GETADVLISTEX(const SOCKET s, unsigned int *NumberOfGame
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_ENTERCHAT;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//NumberOfGames
 	*(unsigned int*)(packet_buffer + BNET_LEN_POS) = *NumberOfGames;
@@ -635,7 +639,7 @@ void VB6_API2 SID_ENTERCHAT(const SOCKET s, unsigned char *Username, unsigned ch
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_ENTERCHAT;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Username
 	if (strlen((const char*)Username) >= BNET_USERNAME_MAX)
@@ -676,7 +680,7 @@ void VB6_API2 SERVER_SID_ENTERCHAT(const SOCKET s, unsigned char *UniqueUsername
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_ENTERCHAT;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//UniqueUsername
 	if (strlen((const char*)UniqueUsername) >= BNET_USERNAME_MAX)
@@ -724,7 +728,7 @@ void VB6_API2 SID_GETCHANNELLIST(const SOCKET s, unsigned char *ProductID)
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_GETCHANNELLIST;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//ProductID
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *(unsigned int*)(ProductID);
@@ -752,7 +756,7 @@ void VB6_API2 SERVER_SID_GETCHANNELLIST(const SOCKET s, unsigned int *NumberOfCh
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_GETCHANNELLIST;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	for (unsigned int i = 0; i < *NumberOfChannels; i++)
 	{
@@ -783,7 +787,7 @@ void VB6_API2 SID_JOINCHANNEL(const SOCKET s, unsigned int *Flags, unsigned char
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_JOINCHANNEL;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Flags
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Flags;
@@ -819,7 +823,7 @@ void VB6_API2 SID_CHATCOMMAND(const SOCKET s, unsigned char *TextMessage)
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CHATCOMMAND;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//TextMessage
 	if (strlen((const char*)TextMessage) >= BNET_CMESSAGE_MAX)
@@ -1828,8 +1832,6 @@ void VB6_API2 SERVER_SID_READCOOKIE(const SOCKET s, unsigned int *UnknowenDW1, u
 	}
 	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), KeyName, strlen((const char*)KeyName));
 	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
-	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), KeyValue, strlen((const char*)KeyValue));
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
 
 	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
 
@@ -2652,7 +2654,7 @@ void VB6_API2 SID_CDKEY(const SOCKET s, unsigned int *Spawn, unsigned char *CDKe
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CDKEY;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Product Version Byte (DWORD)
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Spawn;
@@ -2693,7 +2695,7 @@ void VB6_API2 SERVER_SID_CDKEY(const SOCKET s, unsigned int *Result, unsigned ch
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CDKEY;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Result
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
@@ -2729,7 +2731,7 @@ void VB6_API2 SID_CHANGEPASSWORD(const SOCKET s, unsigned int *ClientKey, unsign
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CHANGEPASSWORD;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Result
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *ClientKey;
@@ -2775,7 +2777,7 @@ void VB6_API2 SERVER_SID_CHANGEPASSWORD(const SOCKET s, unsigned int *Result)
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CHANGEPASSWORD;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Result
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
@@ -2804,7 +2806,7 @@ void VB6_API2 SID_GETFILETIME(const SOCKET s, unsigned int *RequestID, unsigned 
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_GETFILETIME;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//RequestID
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RequestID;
@@ -2843,7 +2845,7 @@ void VB6_API2 SERVER_SID_GETFILETIME(const SOCKET s, unsigned int *RequestID, un
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_GETFILETIME;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//RequestID
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *RequestID;
@@ -2888,7 +2890,7 @@ void VB6_API2 SID_PROFILE(const SOCKET s, unsigned int *Cookie, unsigned char *U
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_PROFILE;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Cookie
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Cookie;
@@ -2924,7 +2926,7 @@ void VB6_API2 SERVER_SID_PROFILE(const SOCKET s, unsigned int *Cookie, unsigned 
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_PROFILE;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Cookie
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Cookie;
@@ -2977,7 +2979,7 @@ void VB6_API2 SID_CDKEY2(const SOCKET s, unsigned int *Spawn, unsigned int *CDKe
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CDKEY2;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Spawn
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Spawn;
@@ -3029,7 +3031,7 @@ void VB6_API2 SERVER_SID_CDKEY2(const SOCKET s, unsigned int *Result, unsigned c
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CDKEY2;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Result
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
@@ -3103,7 +3105,7 @@ void VB6_API2 SERVER_SID_LOGONRESPONSE2(const SOCKET s, unsigned int *Result, un
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_LOGONRESPONSE2;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Result
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
@@ -3139,7 +3141,7 @@ void VB6_API2 SID_CHECKDATAFILE2(const SOCKET s, unsigned int *FileSizeInBytes, 
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CHECKDATAFILE2;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//FileSizeInBytes
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *FileSizeInBytes;
@@ -3178,7 +3180,7 @@ void VB6_API2 SERVER_SID_CHECKDATAFILE2(const SOCKET s, unsigned int *Result)
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CHECKDATAFILE2;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Result
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
@@ -3239,7 +3241,7 @@ void VB6_API2 SERVER_SID_CREATEACCOUNT2(const SOCKET s, unsigned int *Result, un
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_CREATEACCOUNT2;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//Result
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
@@ -3726,7 +3728,7 @@ void VB6_API2 SID_AUTHINFO(const SOCKET s, unsigned char *PlatformID, unsigned i
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_AUTHINFO;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//ProtocolID has always been 0x00000000
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = 0;
@@ -3797,7 +3799,7 @@ void VB6_API2 SERVER_SID_AUTHINFO(const SOCKET s, unsigned int *LoginVersion, un
 
 	*(packet_buffer + 0) = BNET_PROTO;
 	*(packet_buffer + 1) = ID_SID_AUTHINFO;
-	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN; //(head + length)
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
 
 	//LoginVersion
 	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *LoginVersion;
@@ -3899,6 +3901,249 @@ void VB6_API2 SID_AUTH_CHECK(const SOCKET s, unsigned int *ClientKey,
 
 #ifdef _DEBUG
 	OutputDebugString("SID_AUTH_CHECK: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SERVER_SID_AUTH_CHECK(const SOCKET s, unsigned int *Result, unsigned char *Message)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_AUTH_CHECK: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN + BNET_FILEPATH_MAX];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN + BNET_FILEPATH_MAX);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_AUTH_CHECK;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Result
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//Message
+	if (strlen((const char*)Message) >= BNET_FILEPATH_MAX)
+	{
+		Message[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Message, strlen((const char*)Message));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_AUTH_CHECK: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_AUTH_ACCOUNTCREATE(const SOCKET s, unsigned char *Salt, unsigned char *Verifier, unsigned char *UserName)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_AUTH_ACCOUNTCREATE: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (NLS_SALT_LEN * 2) + BNET_USERNAME_MAX];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (NLS_SALT_LEN * 2) + BNET_USERNAME_MAX);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_AUTH_ACCOUNTCREATE;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Salt
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Salt, NLS_SALT_LEN);
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += NLS_SALT_LEN;
+	//Verifier
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Verifier, NLS_SALT_LEN);
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += NLS_SALT_LEN;
+	//Message
+	if (strlen((const char*)UserName) >= BNET_USERNAME_MAX)
+	{
+		UserName[BNET_USERNAME_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), UserName, strlen((const char*)UserName));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_AUTH_ACCOUNTCREATE: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SERVER_SID_AUTH_ACCOUNTCREATE(const SOCKET s, unsigned int *Result)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_AUTH_ACCOUNTCREATE: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_AUTH_ACCOUNTCREATE;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Result
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_AUTH_ACCOUNTCREATE: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_AUTH_ACCOUNTLOGON(const SOCKET s, unsigned char *Client_A, unsigned char *UserName)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_AUTH_ACCOUNTLOGON: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + NLS_SALT_LEN + BNET_USERNAME_MAX];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + NLS_SALT_LEN + BNET_USERNAME_MAX);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_AUTH_ACCOUNTLOGON;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Client_A
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Client_A, NLS_SALT_LEN);
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += NLS_SALT_LEN;
+	//Message
+	if (strlen((const char*)UserName) >= BNET_USERNAME_MAX)
+	{
+		UserName[BNET_USERNAME_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), UserName, strlen((const char*)UserName));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_AUTH_ACCOUNTLOGON: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SERVER_SID_AUTH_ACCOUNTLOGON(const SOCKET s, unsigned int *Result, unsigned char *Salt_S, unsigned char *ServerKey_B)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_AUTH_ACCOUNTLOGON: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + (NLS_SALT_LEN * 2) + DW_LEN];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + (NLS_SALT_LEN * 2) + DW_LEN);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_AUTH_ACCOUNTLOGON;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Result
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//Salt_S
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Salt_S, NLS_SALT_LEN);
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += NLS_SALT_LEN;
+	//ServerKey_B
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), ServerKey_B, NLS_SALT_LEN);
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += NLS_SALT_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_AUTH_ACCOUNTLOGON: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SID_AUTH_ACCOUNTLOGONPROOF(const SOCKET s, unsigned char *M1)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SID_AUTH_ACCOUNTLOGONPROOF: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + SHA_LEN];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + SHA_LEN);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_AUTH_ACCOUNTLOGONPROOF;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//ServerKey_B
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), M1, SHA_LEN);
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SHA_LEN;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SID_AUTH_ACCOUNTLOGONPROOF: HAS BEEN SENT\r\n");
+#endif
+}
+
+void VB6_API2 SERVER_SID_AUTH_ACCOUNTLOGONPROOF(const SOCKET s, unsigned int *Result, unsigned char *M2, unsigned char *Message)
+{
+	if (s == INVALID_SOCKET)
+	{
+		//type up a debug print out of the error
+#ifdef _DEBUG
+		OutputDebugString("SERVER_SID_AUTH_ACCOUNTLOGONPROOF: INVALID_SOCKET\r\n");
+#endif
+		return;
+	} //vb6 socket handle was -1 (not initalized / not bound)
+
+	unsigned char packet_buffer[BNET_HEAD_LEN + DW_LEN + SHA_LEN + BNET_FILEPATH_MAX];
+	ZeroMemory(packet_buffer, BNET_HEAD_LEN + DW_LEN + SHA_LEN + BNET_FILEPATH_MAX);
+
+	*(packet_buffer + 0) = BNET_PROTO;
+	*(packet_buffer + 1) = ID_SID_AUTH_ACCOUNTLOGONPROOF;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) = (unsigned short)BNET_HEAD_LEN;
+
+	//Result
+	*(unsigned int*)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))) = *Result;
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += DW_LEN;
+	//M2
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), M2, SHA_LEN);
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += SHA_LEN;
+	//Message
+	if (strlen((const char*)Message) >= BNET_FILEPATH_MAX)
+	{
+		Message[BNET_FILEPATH_MAX] = 0x00;
+	}
+	memcpy((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS))), Message, strlen((const char*)Message));
+	*(unsigned short*)(packet_buffer + BNET_LEN_POS) += strlen((char *)(packet_buffer + (*(unsigned short*)(packet_buffer + BNET_LEN_POS)))) + 1;
+
+	send(s, (const char *)packet_buffer, *(unsigned short*)(packet_buffer + BNET_LEN_POS), 0);
+
+#ifdef _DEBUG
+	OutputDebugString("SERVER_SID_AUTH_ACCOUNTLOGONPROOF: HAS BEEN SENT\r\n");
 #endif
 }
 
